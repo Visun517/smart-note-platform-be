@@ -7,7 +7,7 @@ interface AuthRequest extends Request {
 
 export const verifyRefreshToken = (req: AuthRequest, res: Response, next: NextFunction) => {
 
-  const refreshToken = req.headers.refreshtoken as string;
+  const refreshToken = req.cookies?.refreshToken as string;
   if (!refreshToken) return res.status(401).json({ message: "Not found refresh token" });
 
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string, (err, decoded) => {

@@ -9,6 +9,7 @@ import subjectRouter from "./routes/subjectsRoutes";
 import aiRouter from "./routes/aiRouter";
 import quizeAttemptRouter from "./routes/quizeAttemptRouter";
 import userRouter from "./routes/userControllerRoutes";
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -18,9 +19,10 @@ const MONGO_URI = process.env.MONGO_URI as string;
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser())
 
 app.use(cors({
-  origin: 'http://localhost:5174',
+  origin: 'http://localhost:5173',
   credentials: true
 }));
 
@@ -37,7 +39,7 @@ app.use('/api/v1/note', noteRouter);
 app.use('/api/v1/subject', subjectRouter);
 
 // AI router
-app.use('/api/v1/ai' , aiRouter);
+app.use('/api/v1/ai', aiRouter);
 
 // Quiz Attempt router
 app.use('/api/v1/quiz', quizeAttemptRouter);
@@ -48,8 +50,8 @@ app.use('/api/v1/user', userRouter);
 mongoose.connect(MONGO_URI).then(() => {
   console.log('Database is connected..!')
 
-}).catch((error : any) => {
-  console.log('Fail to connect Database..!' , error)
+}).catch((error: any) => {
+  console.log('Fail to connect Database..!', error)
   process.exit(1)
 })
 

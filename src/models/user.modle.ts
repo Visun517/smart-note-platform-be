@@ -16,7 +16,7 @@ const UserSchema = new Schema<IUser>(
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    imageUrl: { type: String , required: true },
+    imageUrl: { type: String , required: false },
     totalNotes: { type: Number, default: 0 },
     totalSummaries: { type: Number, default: 0 },
     totalQuestions: { type: Number, default: 0 },

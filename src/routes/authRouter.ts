@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { me, refresh, userLogin, userRegister } from "../controllers/authController";
+import { logout, me, refresh, userLogin, userRegister } from "../controllers/authController";
 import { authenticate } from "../middleware/authMiddleware";
 import { verifyRefreshToken } from "../middleware/refreshTokenMiddleware";
 
@@ -18,9 +18,14 @@ authRouter.get(
   authenticate,
   me);
 
-authRouter.get(
+authRouter.post(
   '/refresh',
   verifyRefreshToken,
   refresh);
+
+authRouter.get(
+  '/logout',
+  authenticate,
+  logout);
 
 export default authRouter;
