@@ -9,6 +9,8 @@ export interface IUser extends Document {
   totalSummaries: number;
   totalQuestions: number;
   totalFlashcards: number;
+  resetPasswordToken: String | undefined,
+  resetPasswordExpire: Date | undefined
 }
 
 const UserSchema = new Schema<IUser>(
@@ -20,7 +22,9 @@ const UserSchema = new Schema<IUser>(
     totalNotes: { type: Number, default: 0 },
     totalSummaries: { type: Number, default: 0 },
     totalQuestions: { type: Number, default: 0 },
-    totalFlashcards: { type: Number, default: 0 }
+    totalFlashcards: { type: Number, default: 0 },
+    resetPasswordToken: { type: String, required: false },
+    resetPasswordExpire: { type: Date , required: false }
   },
   { timestamps: true }
 );

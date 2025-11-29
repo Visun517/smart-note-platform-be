@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { logout, me, refresh, userLogin, userRegister } from "../controllers/authController";
+import { forgotPassword, logout, me, refresh, resetPassword, userLogin, userRegister } from "../controllers/authController";
 import { authenticate } from "../middleware/authMiddleware";
 import { verifyRefreshToken } from "../middleware/refreshTokenMiddleware";
 
@@ -12,6 +12,15 @@ authRouter.post(
 authRouter.post(
   "/login",
   userLogin);
+
+authRouter.post(
+  '/forgot-password',
+  forgotPassword);
+
+authRouter.post(
+  '/reset-password/:token',
+  resetPassword
+)
 
 authRouter.get(
   "/me",
@@ -27,5 +36,7 @@ authRouter.get(
   '/logout',
   authenticate,
   logout);
+
+
 
 export default authRouter;
