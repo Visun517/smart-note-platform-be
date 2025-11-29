@@ -6,7 +6,9 @@ import { AuthRequest } from "../middleware/authMiddleware";
 import jwt from "jsonwebtoken";
 import crypto from 'crypto';
 import  sendMail  from "../utils/sendMail";
+import { OAuth2Client } from 'google-auth-library';
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID); 
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
 
 export const userRegister = async (req: Request, res: Response) => {
@@ -192,5 +194,58 @@ export const forgotPassword = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Reset password failed' });
+  }
+};
+
+export const googleLogin = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body; 
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload) {
+      return res.status(400).json({ message: "Invalid Google Token" });
+    }
+
+    const { email, name, sub, picture } = payload; 
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        username: name,
+        email: email,
+        password: sub + crypto.randomUUID(), 
+      });
+    }
+
+    
+    const accessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Google Login successful",
+      data: {
+        email: user.email,
+        id: user._id,
+        accessToken, 
+      },
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Google Login Failed" });
   }
 };

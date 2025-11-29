@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { forgotPassword, logout, me, refresh, resetPassword, userLogin, userRegister } from "../controllers/authController";
+import { forgotPassword, googleLogin, logout, me, refresh, resetPassword, userLogin, userRegister } from "../controllers/authController";
 import { authenticate } from "../middleware/authMiddleware";
 import { verifyRefreshToken } from "../middleware/refreshTokenMiddleware";
 
@@ -36,6 +36,11 @@ authRouter.get(
   '/logout',
   authenticate,
   logout);
+
+authRouter.post(
+  '/google/login',
+  googleLogin
+)
 
 
 
