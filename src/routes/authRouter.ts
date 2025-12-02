@@ -32,7 +32,7 @@ authRouter.post(
   verifyRefreshToken,
   refresh);
 
-authRouter.get(
+authRouter.post(
   '/logout',
   authenticate,
   logout);

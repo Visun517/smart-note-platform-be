@@ -223,7 +223,6 @@ export const googleLogin = async (req: Request, res: Response) => {
       });
     }
 
-    
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
 

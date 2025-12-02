@@ -10,6 +10,7 @@ import aiRouter from "./routes/aiRouter";
 import quizeAttemptRouter from "./routes/quizeAttemptRouter";
 import userRouter from "./routes/userControllerRoutes";
 import cookieParser from 'cookie-parser';
+import dashboardRouter from "./routes/dashboardRoute";
 
 dotenv.config();
 
@@ -21,8 +22,20 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser())
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174"
+];
+
 app.use(cors({
-  origin: 'http://localhost:5174',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // Postman / mobile apps
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 
@@ -46,6 +59,9 @@ app.use('/api/v1/quiz', quizeAttemptRouter);
 
 // User Router
 app.use('/api/v1/user', userRouter);
+
+// Dashboard Router
+app.use('/api/v1/dashboard', dashboardRouter);
 
 mongoose.connect(MONGO_URI).then(() => {
   console.log('Database is connected..!')
