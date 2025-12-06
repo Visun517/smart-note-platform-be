@@ -9,14 +9,17 @@ import { Subject } from "../models/subject.modle";
 
 export const createNote = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, html, json, subjectId, userId } = req.body;
+    console.log(req.body)
+    const { title, html, json, subjectId } = req.body;
     const images: string[] = req.body?.images || [];
     const pdfUrl: string | undefined = req.body?.pdfUrl;
+    const userId = req.user.sub;
 
     if (!title || !html || !json || !subjectId || !userId) {
       return res.status(400).json({ message: "Note not have a content...!" });
     }
 
+    console.log('create')
     const note = await Note.create({
       title,
       html,
@@ -26,6 +29,7 @@ export const createNote = async (req: AuthRequest, res: Response) => {
       subjectId,
       userId,
     });
+    console.log("Saved Note in DB:", note);
 
     res
       .status(201)
@@ -50,9 +54,6 @@ export const getAllNotes = async (req: AuthRequest, res: Response) => {
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
-
-    console.log(notes);
-
     const totalPages = Math.ceil(totalNotesCount / limit);
 
     res.status(200).json({
@@ -85,14 +86,15 @@ export const getNoteById = async (req: AuthRequest, res: Response) => {
 export const updateNoteById = async (req: AuthRequest, res: Response) => {
   try {
     const noteId = req.params.id;
-    const { title, html, json, subjectId, userId } = req.body;
+    const { title, html, json, subjectId } = req.body;
     const images: string[] = req.body?.images || [];
     const pdfUrl: string | undefined = req.body?.pdfUrl;
+    const userId = req.user.sub;
 
     if (!title || !html || !json || !subjectId || !userId) {
       return res.status(400).json({ message: "Note not have a content...!" });
     }
-
+    console.log('upadate')
     const updatedNote = await Note.findByIdAndUpdate(
       noteId,
       {
@@ -110,6 +112,7 @@ export const updateNoteById = async (req: AuthRequest, res: Response) => {
       .status(201)
       .json({ message: "Note updated Successfully...!", data: updatedNote });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Note update Failed...!" });
   }
 };
@@ -147,7 +150,10 @@ export const pdfGeneration = async (req: AuthRequest, res: Response) => {
     });
 
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0", timeout: 60000 });
+    await page.setContent(htmlContent, {
+      waitUntil: "load",
+      timeout: 120000 // 2 Minutes
+    });
 
     await page.pdf({
       path: tempPath,
@@ -158,10 +164,16 @@ export const pdfGeneration = async (req: AuthRequest, res: Response) => {
     await browser.close();
 
     const uploadResult = await cloudinary.uploader.upload(tempPath, {
-      resource_type: "raw",
+      resource_type: "auto",
       folder: "notes_pdfs",
       public_id: noteId,
+      format: "pdf",
+      type: "upload",       
+      access_mode: "public"
     });
+    const stats = fs.statSync(tempPath);
+    console.log(`PDF Generated Size: ${stats.size} bytes`);
+
 
     return res.status(200).json({
       message: "PDF generated successfully!",
@@ -169,6 +181,7 @@ export const pdfGeneration = async (req: AuthRequest, res: Response) => {
     });
 
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "PDF generation Failed...!" });
   }
 };
