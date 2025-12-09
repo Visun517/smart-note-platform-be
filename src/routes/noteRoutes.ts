@@ -1,6 +1,6 @@
 import { Router  } from "express";
 import { authenticate } from "../middleware/authMiddleware";
-import { createNote, deleteNoteById, getAllNotes, getNoteById, getTrashedNotes, noteBySubjectId, pdfGeneration, updateNoteById } from "../controllers/noteController";
+import { createNote, deleteNoteById, deleteNotePermanently, getAllNotes, getNoteById, getTrashedNotes, noteBySubjectId, pdfGeneration, restoreNote, updateNoteById } from "../controllers/noteController";
 
 const noteRouter = Router();
 
@@ -50,6 +50,18 @@ noteRouter.get(
   '/trashed',
   authenticate,
   getTrashedNotes
+)
+
+noteRouter.patch(
+  '/restore/:id',
+  authenticate,
+  restoreNote
+)
+
+noteRouter.delete(
+  '/delete/permanently/:id',
+  authenticate,
+  deleteNotePermanently
 )
 
 

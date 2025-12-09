@@ -119,14 +119,11 @@ export const deleteNoteById = async (req: AuthRequest, res: Response) => {
   try {
     const noteId = req.params.id;
 
-    const deletedNote = await Note.findByIdAndUpdate(noteId , {isTrashed: true});
-    console.log(deletedNote)
-
-
+    const deletedNote = await Note.findByIdAndUpdate(noteId, { isTrashed: true });
     res
       .status(200)
       .json({ message: "Note deleted Successfully...!", data: deletedNote });
-  } catch (error) { 
+  } catch (error) {
     res.status(500).json({ message: "Note delete Failed...!" });
   }
 };
@@ -168,12 +165,13 @@ export const pdfGeneration = async (req: AuthRequest, res: Response) => {
       folder: "notes_pdfs",
       public_id: noteId,
       format: "pdf",
-      type: "upload",       
+      type: "upload",
       access_mode: "public"
     });
     const stats = fs.statSync(tempPath);
-    console.log(`PDF Generated Size: ${stats.size} bytes`);
+    // console.log(`PDF Generated Size: ${stats.size} bytes`);
 
+    await fs.unlink(tempPath);
 
     return res.status(200).json({
       message: "PDF generated successfully!",
@@ -243,5 +241,31 @@ export const getTrashedNotes = async (req: AuthRequest, res: Response) => {
     res.status(200).json({ notes });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch trashed notes" });
+  }
+};
+
+export const restoreNote = async (req: AuthRequest, res: Response) => {
+  try {
+    const noteId = req.params.id;
+    const note = await Note.findByIdAndUpdate(noteId, { isTrashed: false });
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+    res.status(200).json({ message: "Note restored successfully", note });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to restore note" });
+  }
+};
+
+export const deleteNotePermanently = async (req: AuthRequest, res: Response) => {
+  try {
+    const noteId = req.params.id;
+    const note = await Note.findByIdAndDelete(noteId);
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+    res.status(200).json({ message: "Note deleted successfully", note });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete note" });
   }
 };
