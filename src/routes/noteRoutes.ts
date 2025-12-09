@@ -1,6 +1,6 @@
 import { Router  } from "express";
 import { authenticate } from "../middleware/authMiddleware";
-import { createNote, deleteNoteById, getAllNotes, getNoteById, noteBySubjectId, pdfGeneration, updateNoteById } from "../controllers/noteController";
+import { createNote, deleteNoteById, getAllNotes, getNoteById, getTrashedNotes, noteBySubjectId, pdfGeneration, updateNoteById } from "../controllers/noteController";
 
 const noteRouter = Router();
 
@@ -22,7 +22,7 @@ noteRouter.put(
   updateNoteById
 )
 
-noteRouter.delete(
+noteRouter.patch(
   '/delete/:id',
   authenticate,
   deleteNoteById
@@ -45,6 +45,12 @@ noteRouter.get(
   authenticate,
   getNoteById
 );
+
+noteRouter.get(
+  '/trashed',
+  authenticate,
+  getTrashedNotes
+)
 
 
 export default noteRouter;

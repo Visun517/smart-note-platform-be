@@ -8,15 +8,14 @@ export interface INote extends Document {
   pdfUrl?: string;
   subjectId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
+  isTrashed : boolean
 }
 
 const NoteSchema = new Schema<INote>(
   {
     title: { type: String, required: true },
-
     html: { type: String, required: true },    // Tiptap output HTML
     json: { type: Schema.Types.Mixed },        // Tiptap editor state
-
     images: [{ type: String }],
     pdfUrl: { type: String },
 
@@ -30,7 +29,9 @@ const NoteSchema = new Schema<INote>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true
-    }
+    },
+
+    isTrashed: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

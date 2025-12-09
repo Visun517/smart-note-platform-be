@@ -46,11 +46,9 @@ export const getAllNotes = async (req: AuthRequest, res: Response) => {
 
     const skip = (page - 1) * limit;
 
-    const userId = req.user.sub;
+    const totalNotesCount = await Note.countDocuments({ userId: req.user.sub, isTrashed: false });
 
-    const totalNotesCount = await Note.countDocuments({ userId });
-
-    const notes = await Note.find({ userId })
+    const notes = await Note.find({ userId: req.user.sub, isTrashed: false })
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
@@ -121,12 +119,14 @@ export const deleteNoteById = async (req: AuthRequest, res: Response) => {
   try {
     const noteId = req.params.id;
 
-    const deletedNote = await Note.findByIdAndDelete(noteId);
+    const deletedNote = await Note.findByIdAndUpdate(noteId , {isTrashed: true});
+    console.log(deletedNote)
+
 
     res
       .status(200)
       .json({ message: "Note deleted Successfully...!", data: deletedNote });
-  } catch (error) {
+  } catch (error) { 
     res.status(500).json({ message: "Note delete Failed...!" });
   }
 };
@@ -235,3 +235,13 @@ export const noteSearchByTitle = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Note fetched Failed...!" });
   }
 }
+
+export const getTrashedNotes = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user.sub;
+    const notes = await Note.find({ isTrashed: true, userId: userId });
+    res.status(200).json({ notes });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch trashed notes" });
+  }
+};

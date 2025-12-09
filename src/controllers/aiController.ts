@@ -28,7 +28,7 @@ export const getSummary = async (req: AuthRequest, res: Response) => {
 
     for (const chunk of chunks) {
       const aiResponse = await axios.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
         {
           contents: [{ parts: [{ text: `Summarize:\n${chunk}` }] }]
         },
@@ -46,7 +46,7 @@ export const getSummary = async (req: AuthRequest, res: Response) => {
 
     // Optional: Summaries compress into one final summary
     const finalResponse = await axios.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         contents: [{ parts: [{ text: `Combine & simplify:\n${finalSummary}` }] }]
       },
@@ -71,6 +71,7 @@ export const getSummary = async (req: AuthRequest, res: Response) => {
     res.status(200).json({ summary: result });
 
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Ai summerization is Failed...!" });
   }
 };
@@ -95,7 +96,7 @@ export const getExplanation = async (req: AuthRequest, res: Response) => {
 
     for (const chunk of chunks) {
       const aiResponse = await axios.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
         {
           contents: [{ parts: [{ text: `Explain this note:\n${chunk}` }] }]
         },
@@ -113,7 +114,7 @@ export const getExplanation = async (req: AuthRequest, res: Response) => {
 
     // Optional: Summaries compress into one final summary
     const finalResponse = await axios.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         contents: [{ parts: [{ text: `Combine & simplify:\n${finalExplanation}` }] }]
       },
@@ -180,7 +181,7 @@ export const getQuizQuestions = async (req: AuthRequest, res: Response) => {
     `;
 
     const aiResponse = await axios.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         contents: [{ parts: [{ text: prompt }] }],
       },
@@ -293,7 +294,7 @@ export const getFlashcards = async (req: AuthRequest, res: Response) => {
 
     // ---------------- AI REQUEST ----------------
     const aiResponse = await axios.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { maxOutputTokens: maxToken }
