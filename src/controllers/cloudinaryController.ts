@@ -54,10 +54,10 @@ export const profileUpload = async (req: AuthRequest, res: Response) => {
         uploadStreame.end(req.file?.buffer);
       })
 
-      const pdfUrl = result.secure_url;
+      imageUrl = result.secure_url;
       const user = await User.findByIdAndUpdate(
         userId,
-        { pdfUrl },
+        { imageUrl },
         { new: true }
       );
       res.status(200).json({ user : user });

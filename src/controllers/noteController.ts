@@ -77,6 +77,7 @@ export const getNoteById = async (req: AuthRequest, res: Response) => {
       note,
     });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "One Note fetched Failed...!" });
   }
 };
@@ -169,7 +170,6 @@ export const pdfGeneration = async (req: AuthRequest, res: Response) => {
       access_mode: "public"
     });
     const stats = fs.statSync(tempPath);
-    // console.log(`PDF Generated Size: ${stats.size} bytes`);
 
     await fs.unlink(tempPath);
 
@@ -237,9 +237,34 @@ export const noteSearchByTitle = async (req: AuthRequest, res: Response) => {
 export const getTrashedNotes = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.sub;
-    const notes = await Note.find({ isTrashed: true, userId: userId });
-    res.status(200).json({ notes });
+
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const query = { isTrashed: true, userId: userId };
+
+    const totalNotesCount = await Note.countDocuments(query);
+
+    const notes = await Note.find(query)
+      .sort({ updatedAt: -1 }) 
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(totalNotesCount / limit);
+
+    res.status(200).json({ 
+        notes,
+        pagination: {
+            currentPage: page,
+            totalPages,
+            totalNotesCount,
+            limit
+        }
+    });
+
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Failed to fetch trashed notes" });
   }
 };
@@ -267,5 +292,35 @@ export const deleteNotePermanently = async (req: AuthRequest, res: Response) => 
     res.status(200).json({ message: "Note deleted successfully", note });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete note" });
+  }
+};
+
+export const searchNotes = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user.sub;
+    const searchQuery = req.query.q as string; 
+
+    if (!searchQuery || searchQuery.trim() === "") {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    const notes = await Note.find({
+      userId: userId,       
+      isTrashed: false,     
+      $or: [
+        { title: { $regex: searchQuery, $options: "i" } }, 
+        { html: { $regex: searchQuery, $options: "i" } }   
+      ],
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "Search results found",
+      count: notes.length,
+      notes: notes, 
+    });
+
+  } catch (error) {
+    console.error("Search Error:", error);
+    res.status(500).json({ message: "Search failed" });
   }
 };

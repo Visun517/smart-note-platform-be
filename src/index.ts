@@ -11,6 +11,7 @@ import quizeAttemptRouter from "./routes/quizeAttemptRouter";
 import userRouter from "./routes/userControllerRoutes";
 import cookieParser from 'cookie-parser';
 import dashboardRouter from "./routes/dashboardRoute";
+import aiGeneratedContentRouter from "./routes/aiGeneratedContent";
 
 dotenv.config();
 
@@ -62,6 +63,9 @@ app.use('/api/v1/user', userRouter);
 
 // Dashboard Router
 app.use('/api/v1/dashboard', dashboardRouter);
+
+// AI Generated Content
+app.use('/api/v1/aiGeneratedContent',aiGeneratedContentRouter)
 
 mongoose.connect(MONGO_URI).then(() => {
   console.log('Database is connected..!')

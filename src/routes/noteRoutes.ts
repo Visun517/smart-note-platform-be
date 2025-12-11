@@ -1,8 +1,15 @@
 import { Router  } from "express";
 import { authenticate } from "../middleware/authMiddleware";
-import { createNote, deleteNoteById, deleteNotePermanently, getAllNotes, getNoteById, getTrashedNotes, noteBySubjectId, pdfGeneration, restoreNote, updateNoteById } from "../controllers/noteController";
+import { createNote, deleteNoteById, deleteNotePermanently, getAllNotes, getNoteById, getTrashedNotes, noteBySubjectId, pdfGeneration, restoreNote, searchNotes, updateNoteById } from "../controllers/noteController";
 
 const noteRouter = Router();
+
+
+noteRouter.get(
+  '/search',
+  authenticate,
+  searchNotes
+)
 
 noteRouter.post(
   '/create',
