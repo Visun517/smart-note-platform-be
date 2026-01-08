@@ -211,10 +211,11 @@ export const getQuizQuestions = async (req: AuthRequest, res: Response) => {
       questions: quizData
     });
 
+    const quizes = await Quiz.find({ noteId: note._id, userId: req.user.sub });
+
     res.status(200).json({ 
         message: "Quiz generated successfully", 
-        questions: quizData,
-        quizId: newQuiz._id 
+        questions: quizes, 
     });
 
   } catch (error: any) {

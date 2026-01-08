@@ -43,6 +43,7 @@ export const getQuizAttempt = async (req: AuthRequest, res: Response) => {
 
     res.status(200).json({ quizquizAttempt , message: "Quiz Attempt Successfully...!" } );
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Quiz Attempt Failed...!" });
   }
 }
