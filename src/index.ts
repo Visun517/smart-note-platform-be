@@ -29,7 +29,7 @@ app.use(cookieParser())
 // ];
 
 const allowedOrigins = [
-  'https://smart-note-platform-fe.vercel.app/'
+  'https://smart-note-platform-fe.vercel.app'
 ]
 
 app.use(cors({
