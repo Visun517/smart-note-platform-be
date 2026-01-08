@@ -211,4 +211,13 @@ src/
 
 ---
 
+## 🌍 Live Deployment
+
+The backend is deployed on **Koyeb** and uses **MongoDB Atlas**.
+
+- **🚀 Live API Base URL:** [https://zippy-skunk-visun-72ceb542.koyeb.app](https://zippy-skunk-visun-72ceb542.koyeb.app)
+- **🍃 MongoDB Dashboard:** [Atlas Cluster Overview](https://cloud.mongodb.com/v2/6957c9aa4017603e5cf962f1#/overview?automateSecurity=true)
+
+---
+
 Developed by **Visun Perbodha** 🚀
