@@ -215,7 +215,7 @@ src/
 
 The backend is deployed on **Koyeb** and uses **MongoDB Atlas**.
 
-- **🚀 Live API Base URL:** [https://zippy-skunk-visun-72ceb542.koyeb.app](https://zippy-skunk-visun-72ceb542.koyeb.app)
+- **🚀 Live API Base URL:** [https://zippy-skunk-visun-72ceb542.koyeb.app](https://app.koyeb.com/services/71e74d35-0e3e-4e7d-b4ca-0d41887117ed?deploymentId=2ca64c7f-beb7-4572-a08f-81439d569208)
 - **🍃 MongoDB Dashboard:** [Atlas Cluster Overview](https://cloud.mongodb.com/v2/6957c9aa4017603e5cf962f1#/overview?automateSecurity=true)
 
 ---
